@@ -42,31 +42,77 @@ var ciscoIOS = (function() {
 
 
     var ciscoLogPatterns = {
-        "SSH" : {
-            "SSH2_UNEXPECTED_MSG": newDissect("Unexpected message type has arrived. Terminating the connection from %{source.address}"),
+        //A
+        //B
+        "BGP_SESSION" : {
+            "ADJCHANGE": newDissect("neighbor %{destination.address} %{} vpn vrf %{cisco.vrf} topology base removed from session %{}"),
         },
-        "SEC": accessListMessagePatterns,
+        "BGP" : {
+            "ADJCHANGE": newDissect("neighbor %{destination.address} vpn vrf %{cisco.vrf} %{cisco.bgp.state} %{}"),
+            "NBR_RESET": newDissect("Neighbor %{destination.address} reset (%{})"),
+        },
+        //c
+        "CDP": {
+            "DUPLEX_MISMATCH": newDissect("duplex mismatch discovered on %{source.interface.name} (%{source.interface.name}), with %{destination.address} %{destination.interface.name} (%{destination.interface.duplex})."),
+            "NATIVE_VLAN_MISMATCH": newDissect("Native VLAN mismatch discovered on %{source.interface.name} (%{source.interface.vlan}), with %{destination.address} %{destination.interface.name} (%{destination.interface.vlan})."),
+        },
+        "CLEAR" : {
+            "COUNTERS": newDissect("Clear counter on interface %{source.interface.name} by %{user.name} on %{cisco.terminal} (%{source.address})"),
+        },
+        "CRYPTO" : {
+            "RECVD_PKT_INV_SPI": newDissect("decaps: rec'd IPSEC packet has invalid spi for destaddr=%{destination.address}, prot=%{cisco.prot}, spi=%{}, srcaddr=%{source.address}, input interface=%{source.interface.name}"),
+        }
+        //D
+        "DUAL" : {
+            "NBRCHANGE": newDissect("EIGRP-IPv4 %{}: Neighbor %{destination.address} (%{destination.interface.name}) is %{destination.interface.state}: Interface PEER-TERMINATION received"),
+        },
+        //E
+        //F
         "FMANFP": accessListMessagePatterns,
-        "SEC_LOGIN": {
-            "LOGIN_SUCCESS": newDissect("Login Success [user: %{user.name}] [Source: %{source.address}] [localport: %{source.port}] at %{}"),
+        //G
+        //H
+        "HSRP" : {
+            "DIFFVIP1": newDissect("%{source.interface.name} Grp %{cisco.hsrp.group} active routers virtual IP address %{cisco.hsrp.vip} is different to the locally configured address %{source.address}1"),
+            "STATECHANGE": newDissect("%{source.interface.name} Grp %{cisco.hsrp.group} state %{cisco.hsrp.state}"),
         },
-        "SYS": {
-            "LOGOUT": newDissect("User %{user.name} has exited tty session %{cisco.tty_session_id}(%{source.address})"),
-            "CONFIG_I": newDissect("Configured from %{cisco.comfig_source} by %{user.name} on %{cisco.terminal} (%{source.address})"),
+        //I
+        "IP": {
+            "DUPADDR": newDissect("Duplicate address %{source.address} on %{source.interface.name}, sourced by %{source.mac}"),
+        },
+        //J
+        //K
+        //L
+        "LINEPROTO": {
+            "UPDOWN": newDissect("Line protocol on Interface %{source.interface.name}, changed state to %{source.interface.state}"),
         },
         "LINK":  {
             "UPDOWN": newDissect("Interface %{interface.name}, changed state to %{interface.state}"),
         },
-        "LINEPROTO": {
-            "UPDOWN": newDissect("Line protocol on Interface %{source.interface.name}, changed state to %{source.interface.state}"),
+        //M
+        //N
+        //O
+        //P
+        //Q
+        //R
+        //S
+        "SEC": accessListMessagePatterns,
+        "SEC_LOGIN": {
+            "LOGIN_SUCCESS": newDissect("Login Success [user: %{user.name}] [Source: %{source.address}] [localport: %{source.port}] at %{}"),
         },
-        "CDP": {
-            "NATIVE_VLAN_MISMATCH": newDissect("Native VLAN mismatch discovered on %{source.interface.name} (%{source.interface.vlan}), with %{destination.address} %{destination.interface.name} (%{destination.interface.vlan})."),
-            "DUPLEX_MISMATCH": newDissect("duplex mismatch discovered on %{source.interface.name} (%{source.interface.name}), with %{destination.address} %{destination.interface.name} (%{destination.interface.duplex})."),
+        "SSH" : {
+            "SSH2_UNEXPECTED_MSG": newDissect("Unexpected message type has arrived. Terminating the connection from %{source.address}"),
         },
-        "IP": {
-            "DUPADDR": newDissect("Duplicate address %{source.address} on %{source.interface.name}, sourced by %{source.mac}")
-        }
+        "SYS": {
+            "CONFIG_I": newDissect("Configured from %{cisco.terminal} by %{user.name} on %{cisco.terminal} (%{source.address})"),
+            "LOGOUT": newDissect("User %{user.name} has exited tty session %{cisco.tty_session_id}(%{source.address})"),
+        },
+        //T
+        //U
+        //V
+        //W
+        //X
+        //Y
+        //Z
     }; 
 
     var setLogLevel = function(evt) {
