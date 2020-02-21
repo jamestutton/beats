@@ -13,34 +13,6 @@ var ciscoIOS = (function() {
         }).Run;
     };
 
-    var accessListMessagePatterns = {
-        "IPACCESSLOGP": newDissect("list %{cisco.ios.access_list} %{event.outcome} " +
-            "%{network.transport} %{source.address}(%{source.port}) -> " +
-            "%{destination.address}(%{destination.port}), %{source.packets} packet"),
-
-        "IPACCESSLOGDP": newDissect("list %{cisco.ios.access_list} %{event.outcome} " +
-            "%{network.transport} %{source.address} -> " +
-            "%{destination.address} (%{icmp.type}/%{icmp.code}), %{source.packets} packet"),
-
-        "IPACCESSLOGRP": newDissect("list %{cisco.ios.access_list} %{event.outcome} " +
-            "%{network.transport} %{source.address} -> " +
-            "%{destination.address}, %{source.packets} packet"),
-
-        "IPACCESSLOGSP": newDissect("list %{cisco.ios.access_list} %{event.outcome} " +
-            "%{network.transport} %{source.address} -> " +
-            "%{destination.address} (%{igmp.type}), %{source.packets} packet"),
-
-        "IPACCESSLOGNP": newDissect("list %{cisco.ios.access_list} %{event.outcome} " +
-            "%{network.iana_number} %{source.address} -> " +
-            "%{destination.address}, %{source.packets} packet"),
-    };
-    // Add IPv6 log message patterns.
-    accessListMessagePatterns.ACCESSLOGP = accessListMessagePatterns.IPACCESSLOGP;
-    accessListMessagePatterns.ACCESSLOGSP = accessListMessagePatterns.IPACCESSLOGSP;
-    accessListMessagePatterns.ACCESSLOGDP = accessListMessagePatterns.IPACCESSLOGDP;
-    accessListMessagePatterns.ACCESSLOGNP = accessListMessagePatterns.IPACCESSLOGNP;
-
-
     var ciscoLogPatterns = {
         //A
         //B
@@ -68,7 +40,7 @@ var ciscoIOS = (function() {
         },
         //E
         //F
-        "FMANFP": accessListMessagePatterns,
+        // "FMANFP": == "SEC" Late Bind it
         //G
         //H
         "HSRP" : {
@@ -95,7 +67,27 @@ var ciscoIOS = (function() {
         //Q
         //R
         //S
-        "SEC": accessListMessagePatterns,
+        "SEC": {
+            "IPACCESSLOGP": newDissect("list %{cisco.ios.access_list} %{event.outcome} " +
+            "%{network.transport} %{source.address}(%{source.port}) -> " +
+            "%{destination.address}(%{destination.port}), %{source.packets} packet"),
+
+        "IPACCESSLOGDP": newDissect("list %{cisco.ios.access_list} %{event.outcome} " +
+            "%{network.transport} %{source.address} -> " +
+            "%{destination.address} (%{icmp.type}/%{icmp.code}), %{source.packets} packet"),
+
+        "IPACCESSLOGRP": newDissect("list %{cisco.ios.access_list} %{event.outcome} " +
+            "%{network.transport} %{source.address} -> " +
+            "%{destination.address}, %{source.packets} packet"),
+
+        "IPACCESSLOGSP": newDissect("list %{cisco.ios.access_list} %{event.outcome} " +
+            "%{network.transport} %{source.address} -> " +
+            "%{destination.address} (%{igmp.type}), %{source.packets} packet"),
+
+        "IPACCESSLOGNP": newDissect("list %{cisco.ios.access_list} %{event.outcome} " +
+            "%{network.iana_number} %{source.address} -> " +
+            "%{destination.address}, %{source.packets} packet"),
+        },
         "SEC_LOGIN": {
             "LOGIN_SUCCESS": newDissect("Login Success [user: %{user.name}] [Source: %{source.address}] [localport: %{source.port}] at %{}"),
         },
@@ -114,6 +106,12 @@ var ciscoIOS = (function() {
         //Y
         //Z
     }; 
+            
+    ciscoLogPatterns.SEC.ACCESSLOGP = ciscoLogPatterns.SEC.IPACCESSLOGP;
+    ciscoLogPatterns.SEC.ACCESSLOGSP = ciscoLogPatterns.SEC.IPACCESSLOGSP;
+    ciscoLogPatterns.SEC.ACCESSLOGDP = ciscoLogPatterns.SEC.IPACCESSLOGDP;
+    ciscoLogPatterns.SEC.ACCESSLOGNP = ciscoLogPatterns.SEC.IPACCESSLOGNP;
+    ciscoLogPatterns.FMANFP = ciscoLogPatterns.SEC;
 
     var setLogLevel = function(evt) {
         var severity = evt.Get("event.severity");
